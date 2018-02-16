@@ -1,0 +1,70 @@
+<!-- Event card -->
+<style>
+  .demo-card-event.mdl-card {
+    width: 20rem;
+    height: 5rem;
+    background: #4475b8;
+  }
+  .demo-card-event > .mdl-card__actions {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  .demo-card-event > .mdl-card__title {
+    align-items: flex-start;
+  }
+  .demo-card-event > .mdl-card__title > h4 {
+    margin-top: 0;
+    padding-top: 3rem;
+  }
+  .demo-card-event > .mdl-card__actions {
+    display: flex;
+    box-sizing:border-box;
+    align-items: center;
+  }
+  .demo-card-event > .mdl-card__actions > .material-icons {
+    padding-right: 10px;
+  }
+  .demo-card-event > .mdl-card__title,
+  .demo-card-event > .mdl-card__actions,
+  .demo-card-event > .mdl-card__actions > .mdl-button {
+    color: #fff;
+  }
+</style>
+
+
+<% if !@fee_structures.nil? %>
+  <div class="mdl-grid">
+    <div class="mdl-layout-spacer"></div>
+    <div class="" style="overflow: auto">
+      <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" id="myTable_students">
+        <thead>
+          <tr>
+            <th class="mdl-data-table__cell--non-numeric">Class</th>
+            <th class="mdl-data-table__cell--non-numeric">Section</th>
+            <th class="mdl-data-table__cell--non-numeric">No. of Students</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+        <% @fee_structures.each do |fee_structure| %>
+            <tr>
+              <td class="mdl-data-table__cell--non-numeric"><%= fee_structure.student_class %></td>
+              <td class="mdl-data-table__cell--non-numeric"><%= fee_structure.section %></td>
+              <td class="mdl-data-table__cell--non-numeric"><%= Student.where(student_class: fee_structure.student_class, division: fee_structure.section).count %></td>
+              <td class="mdl-data-table__cell--non-numeric">
+                <%= link_to 'View', {controller: 'students', action: 'index',
+                                                                                             standard: fee_structure.student_class, section: fee_structure.section },
+                            class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored', id:"tt_show_#{fee_structure.id}" %>
+              </td>
+            </tr>
+
+            <div class="mdl-tooltip" data-mdl-for="tt_show_<%= fee_structure.id %>">
+              <strong>View Students</strong>
+            </div>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="mdl-layout-spacer"></div>
+  </div>
+<% end %>

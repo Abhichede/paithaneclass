@@ -1,0 +1,11 @@
+<%= link_to "<i class='material-icons'>keyboard_arrow_left</i> Back".html_safe, :back, class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent' %>
+<div class="mdl-grid">
+  <div class="mdl-layout-spacer"></div>
+  <h3>New Office Expense</h3>
+  <div class="mdl-layout-spacer"></div>
+</div>
+<div class="mdl-grid">
+  <div class="mdl-layout-spacer"></div>
+  <%= render 'form', office_expense: @office_expense %>
+  <div class="mdl-layout-spacer"></div>
+</div>

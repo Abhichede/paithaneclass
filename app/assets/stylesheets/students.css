@@ -1,0 +1,164 @@
+.is-focused > .mdl-textfield__input{
+    border-bottom: none !important;
+}
+
+.select-editable {
+    position:relative;
+    background-color:white;
+    border:solid grey 1px;
+    width:120px;
+    height:18px;
+}
+.select-editable select {
+    position:absolute;
+    top:0;
+    left:0;
+    font-size:14px;
+    border:none;
+    width:120px;
+    margin:0;
+}
+.select-editable input {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100px;
+    padding:1px;
+    font-size:12px;
+    border:none;
+}
+.select-editable select:focus, .select-editable input:focus {
+    outline:none;
+}
+table > thead{
+    background-color: #46B6AC;
+}
+table > thead > tr > th{
+
+    color: #ffffff !important;
+}
+
+div.data-list{
+    line-height: normal;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+}
+div.data-list > span{
+    float: right;
+}
+.demo-card-square-students{
+    width: 100%;
+    height: 25rem;
+}
+.demo-list-item > .mdl-list__item{
+    padding: 0 !important;
+}
+.demo-list-item, .mdl-list{
+    padding: 0 !important;
+}
+.demo-card-square > .mdl-card__title {
+    color: #fff;
+    background-color: #46B6AC;
+}
+.login-card {
+    background-color: #F7F7F7;
+}
+.login-card > .mdl-card__actions{
+    background-color: rgba(208,208,208,0.56);;
+}
+
+#myTable > tbody {
+    display:block;
+    max-height: 25rem;
+    overflow:auto;
+}
+#myTable > thead, #myTable > tbody tr {
+    display:table;
+    width:100%;
+    table-layout:fixed;/* even columns width , fix width of table too*/
+}
+table#myTable {
+    width:80rem;
+}
+
+table#myTable > tbody > tr > td{
+    white-space: normal;
+    word-wrap: break-word;
+}
+table#table_stud_profile{
+    white-space: normal;
+    word-wrap: break-word;
+    width: 100%;
+}
+
+#myTable_students > tbody {
+    display:block;
+    max-height: 35rem;
+    overflow:auto;
+}
+#myTable_students > thead, #myTable_students > tbody tr {
+    display:table;
+    width:100%;
+    table-layout:fixed;/* even columns width , fix width of table too*/
+}
+table#myTable_students {
+    width:80rem;
+}
+
+table#myTable_students > tbody > tr > td{
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+/* ************************** print methods *******************************/
+@media print {
+    .avoid-in-print{
+        display: none;
+    }
+
+    /* Default left, right, top, bottom margin is 2cm */
+    @page {
+        margin: .5cm;
+    }
+    h5{
+        color: red !important;
+        margin: 0 !important;
+        font-size: medium;
+    }
+    em{
+        font-size: smaller;
+    }
+}
+/******************************************************************************/
+
+.mdl-navigation__link{
+    color: #000 !important;
+    font-size: medium;
+}
+.mdl-navigation__link:hover{
+    background-color: #46B6AC !important;
+    color: #fff !important;
+}
+
+#list_dropdown{
+    max-height: 14rem;
+    overflow: auto;
+}
+
+
+
+/* Material lite design  */
+.mdl-textfield__label__icon {
+   font-size: xx-large;
+   color: #3f51b5;
+}
+#student_form_card{
+    width: 70%;
+}
+
+tbody tr td{
+    font-size: 14px;
+    /*font-weight: 400;*/
+}
+/* material design end   */

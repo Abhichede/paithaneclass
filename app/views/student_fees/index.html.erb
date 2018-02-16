@@ -1,0 +1,60 @@
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        $('#page_name').replaceWith("<span id='page_name'> - Fee Collection</span>")
+    });
+</script>
+<%= link_to "<i class='material-icons'>keyboard_arrow_left</i> Back".html_safe, :back, class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent' %>
+<div class="mdl-grid">
+  <div class="mdl-layout-spacer mdl-cell mdl-cell--1-col "></div>
+  <div class="table-container mdl-cell mdl-cell--11-col" style="overflow: auto">
+    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" id="myTable">
+      <thead>
+        <tr>
+          <th class="mdl-data-table__cell--non-numeric">Batch</th>
+          <th class="mdl-data-table__cell--non-numeric">Allocated</th>
+          <th class="mdl-data-table__cell--non-numeric">Paid</th>
+          <th class="mdl-data-table__cell--non-numeric">Balance</th>
+        </tr>
+      </thead>
+
+      <tbody style=" height: 20rem;">
+        <%
+          allocated = 0.0
+          paid = 0.0
+          balance = 0.0
+        %>
+        <% @fees.each do |student_fee| %>
+          <tr>
+            <td class="mdl-data-table__cell--non-numeric"><%= student_fee[0].to_h[:structure] %></td>
+            <td class="mdl-data-table__cell--non-numeric"><%= student_fee[0].to_h[:allocated] %></td>
+            <td class="mdl-data-table__cell--non-numeric"><%= student_fee[0].to_h[:paid] %></td>
+            <td class="mdl-data-table__cell--non-numeric"><%= student_fee[0].to_h[:balance] %></td>
+          </tr>
+          <%
+            allocated += student_fee[0].to_h[:allocated]
+            paid += student_fee[0].to_h[:paid]
+            balance += student_fee[0].to_h[:balance]
+          %>
+        <% end %>
+      </tbody>
+    </table>
+
+    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" id="myTable">
+      <thead>
+        <tr>
+          <th class="mdl-data-table__cell--non-numeric">Total Allocated</th>
+          <th class="mdl-data-table__cell--non-numeric">Total Paid</th>
+          <th class="mdl-data-table__cell--non-numeric">Total Balance</th>
+        </tr>
+      </thead>
+      <tbody style=" height: 3rem;">
+      <tr>
+        <td class="mdl-data-table__cell--non-numeric"><%= allocated %></td>
+        <td class="mdl-data-table__cell--non-numeric"><%= paid %></td>
+        <td class="mdl-data-table__cell--non-numeric"><%= balance %></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="mdl-layout-spacer"></div>
+</div>
