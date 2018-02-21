@@ -2,6 +2,7 @@
 <%= link_to "Print", '#', class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored avoid-in-print', onclick: 'window.print();' %>
 <div class="mdl-grid">
   <div class="mdl-layout-spacer"></div>
+  <%= image_tag 'paithane_class.jpg', class: 'responsive', width: 60, height: 60  %>
   <div class="mdl-layout-spacer"></div>
     <div class="mdl-typography--text-center" >
       <h5 style="color: red"><%= ClassInfo.first.class_name.upcase %></h5>
@@ -14,17 +15,14 @@
 <div class="mdl-grid">
   <span style="float: right">Receipt No.: <%= @payment.id %></span>
   <div class="mdl-layout-spacer"></div>
-  <span style="float: right">Date: <%= @payment.payment_date %></span>
-</div>
-<div class="mdl-grid">
+  <strong>Fee Receipt</strong>
   <div class="mdl-layout-spacer"></div>
-  <h5>Fee Receipt </h5>
-  <div class="mdl-layout-spacer"></div>
+  <span style="float: right">Date: <%= @payment.payment_date.blank? ? Time.now : @payment.payment_date %></span>
 </div>
+
 <div class="mdl-grid">
   <div class="mdl-layout-spacer"></div>
   <div class="mdl-cell mdl-cell--6-col">
-    <h6>
       <table class="table table-bordered">
         <tbody>
           <tr>
@@ -51,36 +49,108 @@
             <td>Paid By: </td>
             <th><%= @payment.paid_by %></th>
           </tr>
+          <tr>
+            <td>Course: </td>
+            <th><%= @payment.fee_structure_id == 0 ? "Previous Balance" : @payment.fee_structure.structure %></th>
+          </tr>
         </tbody>
       </table>
-    </h6>
   </div>
   <div class="mdl-layout-spacer"></div>
 </div>
 <div class="mdl-grid">
   <div class="mdl-layout-spacer"></div>
-  <h5><strong>Total: &#8377; <%= @payment.student.allocated_fee.to_f.round(2) - @payment.student.discount.to_f.round(2) %> /-</strong></h5>
+  <h5><strong>Total: &#8377; <%= @payment.student.allocated_fee.to_f.round(2) - @payment.student.discount.to_f.round(2) + previous_balance(@payment.student) %> /-</strong></h5>
   <div class="mdl-layout-spacer"></div>
   <h5><strong>Paid: &#8377; <%= @payment.student.total_paid %> /-</strong></h5>
   <div class="mdl-layout-spacer"></div>
-  <h5><strong>Balance: &#8377; <%= (@payment.student.allocated_fee.to_f.round(2) - @payment.student.discount.to_f.round(2)) - @payment.student.total_paid.to_f.round(2) %> /-</strong></h5>
+  <h5><strong>Balance: &#8377; <%= (@payment.student.allocated_fee.to_f.round(2) - @payment.student.discount.to_f.round(2) + previous_balance(@payment.student)) - @payment.student.total_paid.to_f.round(2) %> /-</strong></h5>
   <div class="mdl-layout-spacer"></div>
 </div>
-<br/>
 <div class="mdl-grid">
   <div class="mdl-layout-spacer"></div>
-  <h5>
-    <br/>
-    Sign
-  </h5>
+  Sign
+</div>
+<hr/>
+Powered By LINKER IT SOLUTIONS PVT. LTD.
+<hr/>
+
+
+<div class="mdl-grid">
+  <div class="mdl-layout-spacer"></div>
+  <%= image_tag 'paithane_class.jpg', class: 'responsive', width: 60, height: 60  %>
+  <div class="mdl-layout-spacer"></div>
+  <div class="mdl-typography--text-center" >
+    <h5 style="color: red"><%= ClassInfo.first.class_name.upcase %></h5>
+    <em><%= ClassInfo.first.address %></em><br/>
+    <em>Contact No: <%= ClassInfo.first.contact_no %></em>
+  </div>
+  <div class="mdl-layout-spacer"></div>
 </div>
 <hr/>
 <div class="mdl-grid">
+  <span style="float: right">Receipt No.: <%= @payment.id %></span>
   <div class="mdl-layout-spacer"></div>
-  <span style="font-size: smaller">
-    Powered By LINKER IT SOLUTIONS PVT. LTD.
-  </span>
+  <strong>Fee Receipt</strong>
+  <div class="mdl-layout-spacer"></div>
+  <span style="float: right">Date: <%= @payment.payment_date.blank? ? Time.now : @payment.payment_date %></span>
 </div>
+
+<div class="mdl-grid">
+  <div class="mdl-layout-spacer"></div>
+  <div class="mdl-cell mdl-cell--6-col">
+    <table class="table table-bordered">
+      <tbody>
+      <tr>
+        <td>Received With Thanks from:</td>
+        <th><%= @payment.student.first_name.upcase %></th>
+      </tr>
+      <tr>
+        <td>The Sum of Rupees:</td>
+        <th>&#8377; <%= @payment.amount.to_f %></th>
+      </tr>
+      <tr>
+        <td>Payment Mode: </td>
+        <th><%= @payment.payment_method %></th>
+      </tr>
+      <tr>
+        <td>Payment Description: </td>
+        <th><%= @payment.payment_desc %></th>
+      </tr>
+      <tr>
+        <td>Installment no: </td>
+        <th><%= @payment.installment_no %></th>
+      </tr>
+      <tr>
+        <td>Paid By: </td>
+        <th><%= @payment.paid_by %></th>
+      </tr>
+      <tr>
+        <td>Course: </td>
+        <th><%= @payment.fee_structure.structure %></th>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="mdl-layout-spacer"></div>
+</div>
+<div class="mdl-grid">
+  <div class="mdl-layout-spacer"></div>
+  <h5><strong>Total: &#8377; <%= @payment.student.allocated_fee.to_f.round(2) - @payment.student.discount.to_f.round(2) + previous_balance(@payment.student) %> /-</strong></h5>
+  <div class="mdl-layout-spacer"></div>
+  <h5><strong>Paid: &#8377; <%= @payment.student.total_paid %> /-</strong></h5>
+  <div class="mdl-layout-spacer"></div>
+  <h5><strong>Balance: &#8377; <%= (@payment.student.allocated_fee.to_f.round(2) - @payment.student.discount.to_f.round(2) + previous_balance(@payment.student)) - @payment.student.total_paid.to_f.round(2) %> /-</strong></h5>
+  <div class="mdl-layout-spacer"></div>
+</div>
+<div class="mdl-grid">
+  <div class="mdl-layout-spacer"></div>
+  Sign
+</div>
+<hr/>
+Powered By LINKER IT SOLUTIONS PVT. LTD.
+
+
 <script type="text/javascript">
   $(document).ready(function () {
    window.print();

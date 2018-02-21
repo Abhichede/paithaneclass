@@ -7,18 +7,23 @@ class StudentFeesController < ApplicationController
     @fees = []
 
     FeeStructure.all.each do |fee|
-      @students = Student.where("student_class = ? AND division = ?", fee.student_class, fee.section)
+      @students = fee.students
+      @students_fees = fee.student_fees
       allocated = 0.0
       paid = 0.0
-      balance = 0.0
+      discount = 0.0
 
       @students.each do |sfee|
         allocated += sfee.allocated_fee.to_f
-        paid += sfee.total_paid.to_f
-        balance += (sfee.allocated_fee.to_f + sfee.total_paid.to_f)
+        discount += sfee.discount.to_f
+      end
+      @students_fees.each do |sfee|
+        paid += sfee.amount.to_f
       end
 
-      @fees.push([structure: fee.structure, allocated: allocated, paid: paid, balance: balance])
+      balance = (allocated - discount) - paid
+
+      @fees.push([structure: fee.structure, allocated: allocated, paid: paid, balance: balance, discount: discount])
     end
   end
 
@@ -45,10 +50,15 @@ class StudentFeesController < ApplicationController
     @student_fee = StudentFee.new(student_fee_params)
     @student = Student.find(student_fee_params[:student_id])
 
+    pre_bal = 0.0
+    @student.pre_student_garbages.each do |pre|
+      pre_bal += pre.balance_fee
+    end
+
     allocated_fee = @student.allocated_fee.to_f
     discount = @student.discount.to_f
     paid_fee = @student.total_paid.to_f
-    balance_amount = (allocated_fee - discount) - paid_fee
+    balance_amount = (pre_bal + allocated_fee - discount) - paid_fee
     currently_paying = student_fee_params[:amount].to_f
 
     respond_to do |format|
@@ -62,7 +72,7 @@ class StudentFeesController < ApplicationController
           format.json { render json: @student_fee.errors, status: :unprocessable_entity }
         end
       else
-        format.html { redirect_to student_fees_path, notice: 'Amount is greater than balance amount' }
+        format.html { redirect_to @student, alert: 'Amount is greater than balance amount' }
         format.json { render json: @student_fee.errors, status: :unprocessable_entity}
       end
     end
@@ -112,6 +122,6 @@ class StudentFeesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def student_fee_params
-      params.require(:student_fee).permit(:student_id, :payment_date, :installment_no, :amount, :payment_method, :payment_desc, :paid_by, :received_by, :academic_year_id)
+      params.require(:student_fee).permit(:student_id, :payment_date, :installment_no, :amount, :payment_method, :payment_desc, :paid_by, :received_by, :academic_year_id, :fee_structure_id)
     end
 end

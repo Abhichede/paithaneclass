@@ -10,30 +10,49 @@
     <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" id="myTable">
       <thead>
         <tr>
+          <th class="mdl-data-table__cell--non-numeric"> Name </th>
           <th class="mdl-data-table__cell--non-numeric">Batch</th>
           <th class="mdl-data-table__cell--non-numeric">Allocated</th>
+          <th class="mdl-data-table__cell--non-numeric">Discount</th>
           <th class="mdl-data-table__cell--non-numeric">Paid</th>
           <th class="mdl-data-table__cell--non-numeric">Balance</th>
+          <th class="mdl-data-table__cell--non-numeric">Previous Balance</th>
         </tr>
       </thead>
 
       <tbody style=" height: 20rem;">
-        <%
-          allocated = 0.0
-          paid = 0.0
-          balance = 0.0
-        %>
-        <% @fees.each do |student_fee| %>
+      <%
+        allocated = 0.0
+        discount = 0.0
+        paid = 0.0
+        balance = 0.0
+        pre_balance = 0.0
+      %>
+
+        <% @students.each do |student_fee| %>
           <tr>
-            <td class="mdl-data-table__cell--non-numeric"><%= student_fee[0].to_h[:structure] %></td>
-            <td class="mdl-data-table__cell--non-numeric"><%= student_fee[0].to_h[:allocated] %></td>
-            <td class="mdl-data-table__cell--non-numeric"><%= student_fee[0].to_h[:paid] %></td>
-            <td class="mdl-data-table__cell--non-numeric"><%= student_fee[0].to_h[:balance] %></td>
+            <td class="mdl-data-table__cell--non-numeric"><%= student_fee.first_name %></td>
+            <td class="mdl-data-table__cell--non-numeric">
+              <% student_fee.fee_structures.each do |fee| %>
+                  <%= fee.structure %> <br/>
+              <% end %>
+            </td>
+            <td class="mdl-data-table__cell--non-numeric"><%= student_fee.allocated_fee %></td>
+            <td class="mdl-data-table__cell--non-numeric"><%= student_fee.discount %></td>
+            <td class="mdl-data-table__cell--non-numeric"><%= student_fee.total_paid %></td>
+            <td class="mdl-data-table__cell--non-numeric"><%= (student_fee.allocated_fee.to_f - student_fee.discount.to_f - student_fee.total_paid.to_f) %></td>
+            <td>
+              <% student_fee.pre_student_garbages.each do |garbage| %>
+                <%= number_to_indian_currency(garbage.balance_fee) %>
+                  <% pre_balance += garbage.balance_fee.to_f %>
+              <% end unless  student_fee.pre_student_garbages.nil? %>
+            </td>
           </tr>
           <%
-            allocated += student_fee[0].to_h[:allocated]
-            paid += student_fee[0].to_h[:paid]
-            balance += student_fee[0].to_h[:balance]
+            allocated += student_fee.allocated_fee.to_f
+            discount += student_fee.discount.to_f
+            paid += student_fee.total_paid.to_f
+            balance += (student_fee.allocated_fee.to_f - student_fee.discount.to_f - student_fee.total_paid.to_f)
           %>
         <% end %>
       </tbody>
@@ -42,16 +61,22 @@
     <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" id="myTable">
       <thead>
         <tr>
+          <th></th>
           <th class="mdl-data-table__cell--non-numeric">Total Allocated</th>
+          <th class="mdl-data-table__cell--non-numeric">Total Discount</th>
           <th class="mdl-data-table__cell--non-numeric">Total Paid</th>
           <th class="mdl-data-table__cell--non-numeric">Total Balance</th>
+          <th class="mdl-data-table__cell--non-numeric">Total Previous Balance</th>
         </tr>
       </thead>
       <tbody style=" height: 3rem;">
       <tr>
+        <td></td>
         <td class="mdl-data-table__cell--non-numeric"><%= allocated %></td>
+        <td class="mdl-data-table__cell--non-numeric"><%= discount %></td>
         <td class="mdl-data-table__cell--non-numeric"><%= paid %></td>
         <td class="mdl-data-table__cell--non-numeric"><%= balance %></td>
+        <td class="mdl-data-table__cell--non-numeric"><%= pre_balance %></td>
       </tr>
       </tbody>
     </table>

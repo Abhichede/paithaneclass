@@ -28,16 +28,18 @@ class PreStudentGarbagesController < ApplicationController
 
     if !pre_student_garbage_params[:student_id].blank?
       @student = Student.find(pre_student_garbage_params[:student_id])
-      @fee_structure = FeeStructure.find(pre_student_garbage_params[:new_student_class])
+      @fee_structures = FeeStructure.where(id: pre_student_garbage_params[:fee_structure_ids])
+      allocated_fee = 0.0
+      @fee_structures.each do |fee|
+        allocated_fee += fee.allocated_fee.to_f
+      end
       if @student.academic_year.id == pre_student_garbage_params[:new_academic_year].to_i
         respond_to do |format|
           format.html { redirect_to @student, alert: 'Already in same academic year.' }
         end
       else
-        if @student.update(academic_year_id: pre_student_garbage_params[:new_academic_year],
-                           student_class: @fee_structure.student_class,
-                           division: @fee_structure.section, allocated_fee: @fee_structure.allocated_fee,
-                           discount: 0, total_paid: 0)
+        if @student.update(academic_year_id: pre_student_garbage_params[:new_academic_year], allocated_fee: allocated_fee,
+                           discount: 0, total_paid: 0, fee_structure_ids: pre_student_garbage_params[:fee_structure_ids])
           respond_to do |format|
             if @pre_student_garbage.save
               format.html { redirect_to @student, notice: 'Student Successfully transferred.' }
@@ -85,6 +87,6 @@ class PreStudentGarbagesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def pre_student_garbage_params
       params.require(:pre_student_garbage).permit(:academic_year_id, :student_id, :fee_structure_id, :allocated_fee, :paid_fee, :balance_fee, :new_student_class,
-      :new_academic_year)
+      :new_academic_year, :fee_structure_ids => [])
     end
 end

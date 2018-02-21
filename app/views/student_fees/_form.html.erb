@@ -66,6 +66,18 @@
     <div class="mdl-cell mdl-cell--6-col">
       <div class="mdl-layout-spacer"></div>
       <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
+        <%= f.select(:fee_structure_id, options_for_select(@student.fee_structures.map { |fee| [fee.structure, fee.id] },
+                                                         :selected=> @student_fee.fee_structure),
+                     {}, class: 'mdl-textfield__input', id: 'fee_structure') %>
+        <%= f.label 'Select Course', class: 'mdl-textfield__label', for: 'fee_structure' %>
+      </div>
+      <div class="mdl-layout-spacer"></div>
+    </div>
+  </div>
+  <div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--6-col">
+      <div class="mdl-layout-spacer"></div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
         <%= f.select(:payment_method, options_for_select([['Payment Method'],['CASH','CASH'],['Cheque','Cheque'],['Bank Transfer','Bank Transfer'],['NEFT / IMPS / RTGS','NEFT / IMPS / RTGS']],
                                                          :disabled => 'Payment Method', :selected=> @student_fee.payment_method),
                      {}, class: 'mdl-textfield__input', id: 'payment_method') %>

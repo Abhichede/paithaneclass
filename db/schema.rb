@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180215180804) do
+ActiveRecord::Schema.define(version: 20180221093902) do
 
   create_table "academic_years", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "start_month"
@@ -43,6 +43,13 @@ ActiveRecord::Schema.define(version: 20180215180804) do
     t.string   "allocated_fee", null: false
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+  end
+
+  create_table "fee_structures_students", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "student_id",       null: false
+    t.integer "fee_structure_id", null: false
+    t.index ["fee_structure_id", "student_id"], name: "index_fee_structures_students_on_fee_structure_id_and_student_id", using: :btree
+    t.index ["student_id", "fee_structure_id"], name: "index_fee_structures_students_on_student_id_and_fee_structure_id", using: :btree
   end
 
   create_table "office_expenses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -80,6 +87,7 @@ ActiveRecord::Schema.define(version: 20180215180804) do
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
     t.integer  "academic_year_id"
+    t.integer  "fee_structure_id"
   end
 
   create_table "students", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

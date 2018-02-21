@@ -1,6 +1,6 @@
 <%= link_to "<i class='material-icons'>keyboard_arrow_left</i> Back".html_safe,
             {controller: 'students', action: 'index',
-             standard: @student.student_class, section: @student.division },
+             fee_id: params[:fee_id] },
             class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--accent' %>
 <div class="mdl-grid">
   <div class="mdl-cell mdl-cell--4-col">
@@ -34,12 +34,12 @@
           <td class="mdl-data-table__cell--non-numeric"><%= @student.college_name %></td>
         </tr>
         <tr>
-          <th>Student class</th>
-          <td class="mdl-data-table__cell--non-numeric"><%= @student.student_class %></td>
-        </tr>
-        <tr>
-          <th>Division</th>
-          <td class="mdl-data-table__cell--non-numeric"><%= @student.division %></td>
+          <th>Courses</th>
+          <td class="mdl-data-table__cell--non-numeric">
+            <% @student.fee_structures.each do |fee| %>
+              <%= fee.structure %> <br/>
+            <% end %>
+          </td>
         </tr>
         <tr>
           <th>Date of birth</th>
@@ -60,8 +60,7 @@
         <tr>
           <th>Actions</th>
           <td class="mdl-data-table__cell--non-numeric">
-            <%= link_to 'Edit', {controller: 'students', action: 'edit', standard: @student.student_class,
-                                 section: @student.division, id: @student}, class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored' %>
+            <%= link_to 'Edit', {controller: 'students', action: 'edit', fee_id: params[:fee_id], id: @student}, class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored' %>
           </td>
         </tr>
         </tbody>
@@ -95,8 +94,6 @@
           <thead class="students-table">
           <tr>
             <th class="mdl-data-table__cell--non-numeric">Academic Year</th>
-            <th class="mdl-data-table__cell--non-numeric">Class</th>
-            <th class="mdl-data-table__cell--non-numeric">Division/section</th>
             <th class="mdl-data-table__cell--non-numeric">Allocated fee</th>
             <th class="mdl-data-table__cell--non-numeric">Paid Fee</th>
             <th class="mdl-data-table__cell--non-numeric">Balance fee</th>
@@ -112,8 +109,6 @@
               <% @student.pre_student_garbages.each do |student_fee| %>
                   <tr>
                     <td class="mdl-data-table__cell--non-numeric"><%= student_fee.academic_year.year %></td>
-                    <td class="mdl-data-table__cell--non-numeric"><%= student_fee.fee_structure.student_class %></td>
-                    <td class="mdl-data-table__cell--non-numeric"><%= student_fee.fee_structure.section %></td>
                     <td class="mdl-data-table__cell--non-numeric">&#8377; <%= number_to_indian_currency(student_fee.allocated_fee) %></td>
                     <td class="mdl-data-table__cell--non-numeric">&#8377; <%= number_to_indian_currency(student_fee.paid_fee) %></td>
                     <td class="mdl-data-table__cell--non-numeric">&#8377; <%= number_to_indian_currency(student_fee.balance_fee) %></td>
@@ -233,7 +228,6 @@
 
       <%= f.hidden_field :academic_year_id, value: @student.academic_year.id %>
       <%= f.hidden_field :student_id, value: @student.id %>
-      <%= f.hidden_field :fee_structure_id, value: FeeStructure.where(student_class: @student.student_class, section: @student.division).limit(1).first.id %>
       <%= f.hidden_field :allocated_fee, value: @student.allocated_fee.to_f %>
       <%= f.hidden_field :paid_fee, value: @student.total_paid.to_f %>
       <%= f.hidden_field :balance_fee, value: ((@student.allocated_fee.to_f.round(2) - @student.discount.to_f.round(2)) - @student.total_paid.to_f.round(2))%>
@@ -245,9 +239,19 @@
       </div>
 
       <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <%= f.select(:new_student_class, options_for_select(FeeStructure.all.map { |f| [f.structure, f.id] }),
-                     {}, class: 'mdl-textfield__input', id: 'student_class') %>
-        <%= f.label :new_student_class, class: 'mdl-textfield__label', for: 'student_class' %>
+        <div class="multiselect ">
+          <div class="selectBox mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <select class="mdl-textfield__input">
+              <option>Select Course/Batch</option>
+            </select>
+            <div class="overSelect"></div>
+          </div>
+          <div id="checkboxes">
+            <%= collection_check_boxes(:pre_student_garbage, :fee_structure_ids, FeeStructure.all, :id, :structure) do |b| %>
+                <%= b.label(:"data-value" => b.value) { b.check_box + b.text } %>
+            <% end %>
+          </div>
+        </div>
       </div>
 
       <div class="mdl-dialog__actions">
@@ -290,4 +294,22 @@
     transferDialog.querySelector('.close').addEventListener('click', function() {
         transferDialog.close();
     });
+
+
+    $(".selectBox").on('click', function () {
+        showCheckboxes();
+    });
+
+    var expanded = false;
+
+    function showCheckboxes() {
+        var checkboxes = document.getElementById("checkboxes");
+        if (!expanded) {
+            checkboxes.style.display = "block";
+            expanded = true;
+        } else {
+            checkboxes.style.display = "none";
+            expanded = false;
+        }
+    }
 </script>

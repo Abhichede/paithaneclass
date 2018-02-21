@@ -6,7 +6,9 @@
   else
 %>
   $('#fee_not_allocated-error').addClass("hidden")
-  $('input#allocated_fee').val(<%= @allocated_fee.allocated_fee %>);
+  var fee = Number($('input#allocated_fee').val());
+  fee += <%= @allocated_fee.allocated_fee.to_f %>
+      $('input#allocated_fee').val(fee)
   $('div#allocated_fee_div').addClass('is-dirty');
 <%
   end

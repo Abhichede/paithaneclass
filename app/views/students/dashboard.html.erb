@@ -50,10 +50,9 @@
             <tr>
               <td class="mdl-data-table__cell--non-numeric"><%= fee_structure.student_class %></td>
               <td class="mdl-data-table__cell--non-numeric"><%= fee_structure.section %></td>
-              <td class="mdl-data-table__cell--non-numeric"><%= Student.where(student_class: fee_structure.student_class, division: fee_structure.section).count %></td>
+              <td class="mdl-data-table__cell--non-numeric"><%= fee_structure.students.count %></td>
               <td class="mdl-data-table__cell--non-numeric">
-                <%= link_to 'View', {controller: 'students', action: 'index',
-                                                                                             standard: fee_structure.student_class, section: fee_structure.section },
+                <%= link_to 'View', {controller: 'students', action: 'index', fee_id: fee_structure },
                             class: 'mdl-button mdl-js-button mdl-button--raised mdl-button--colored', id:"tt_show_#{fee_structure.id}" %>
               </td>
             </tr>

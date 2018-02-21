@@ -4,12 +4,10 @@ class StudentsController < ApplicationController
   # GET /students
   # GET /students.json
   def index
-    if !params[:query].nil? && !params[:standard].nil? && !params[:section].nil?
-      @students = Student.where("lower(first_name) LIKE lower(?) AND student_class = ? AND division = ?", "%#{params[:query]}%",
-                                "#{params[:standard]}", "#{params[:section]}").order(:created_at => "DESC")
-    elsif !params[:standard].nil? && !params[:section].nil?
-      @students = Student.where("student_class = ? AND division = ?", "#{params[:standard]}",
-                                "#{params[:section]}").order(:created_at => "DESC")
+    if !params[:query].nil? && !params[:fee_id].nil?
+      @students = FeeStructure.find(params[:fee_id]).students.where("lower(first_name) LIKE lower(?)", "%#{params[:query]}%").order(:created_at => "DESC")
+    elsif !params[:fee_id].nil?
+      @students = FeeStructure.find(params[:fee_id]).students.order(:created_at => "DESC")
     end
 
     respond_to do |format|
@@ -39,9 +37,14 @@ class StudentsController < ApplicationController
   # POST /students.json
   def create
     @student = Student.new(student_params)
+    allocated_fee = 0.0
+    @student.fee_structures.each do |fee|
+      allocated_fee += fee.allocated_fee.to_f
+    end
 
     respond_to do |format|
       if @student.save
+        @student.update(:allocated_fee => allocated_fee)
         format.html { redirect_to @student, notice: 'Student was successfully created.' }
         format.json { render :show, status: :created, location: @student }
       else
@@ -58,6 +61,11 @@ class StudentsController < ApplicationController
   def update
     respond_to do |format|
       if @student.update(student_params)
+        allocated_fee = 0.0
+        @student.fee_structures.each do |fee|
+          allocated_fee += fee.allocated_fee.to_f
+        end
+        @student.update(:allocated_fee => allocated_fee)
         format.html { redirect_to @student, notice: 'Student was successfully updated.' }
         format.json { render :show, status: :ok, location: @student }
       else
@@ -89,11 +97,9 @@ class StudentsController < ApplicationController
   # custom methods
   def update_allocated_fee
 
-    s_class = params[:s_class]
-    s_section = params[:s_section]
+    s_class = params[:s_class].to_i
 
-    @allocated_fee = FeeStructure.where(:student_class => s_class,
-                                       :section => s_section).limit(1).first
+    @allocated_fee = FeeStructure.find(s_class)
 
     respond_to do |format|
       if !@allocated_fee.blank?
@@ -107,6 +113,8 @@ class StudentsController < ApplicationController
   def update_discount
     respond_to do |format|
       if params[:discount].blank?
+        format.js {}
+      elsif params[:discount].to_f > (@student.allocated_fee.to_f - @student.total_paid.to_f)
         format.js {}
       else
         @student.update(:discount => params[:discount])
@@ -142,6 +150,6 @@ class StudentsController < ApplicationController
                                       :date_of_birth, :college_name, :student_class,
                                       :admission_date, :division, :allocated_fee,
                                       :total_paid, :no_of_installments, :discount,
-                                      :alternate_mobile, :academic_year_id, :profile_photo)
+                                      :alternate_mobile, :academic_year_id, :profile_photo, {:fee_structure_ids => []})
     end
 end

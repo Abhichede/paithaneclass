@@ -1,5 +1,6 @@
 class FeeStructure < ApplicationRecord
-  has_many :pre_student_garbages
+  has_and_belongs_to_many :students
+  has_many :student_fees
 
   def structure
     "#{student_class} - #{section}"

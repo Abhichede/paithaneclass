@@ -30,5 +30,5 @@ $(function () {
 });
 
 $(document).ready(function () {
-    $('#page_name').replaceWith("<span id='page_name'></span>")
+    $('#page_name').replaceWith("<span id='page_name'></span>");
 });
