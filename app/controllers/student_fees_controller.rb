@@ -4,27 +4,7 @@ class StudentFeesController < ApplicationController
   # GET /student_fees
   # GET /student_fees.json
   def index
-    @fees = []
-
-    FeeStructure.all.each do |fee|
-      @students = fee.students
-      @students_fees = fee.student_fees
-      allocated = 0.0
-      paid = 0.0
-      discount = 0.0
-
-      @students.each do |sfee|
-        allocated += sfee.allocated_fee.to_f
-        discount += sfee.discount.to_f
-      end
-      @students_fees.each do |sfee|
-        paid += sfee.amount.to_f
-      end
-
-      balance = (allocated - discount) - paid
-
-      @fees.push([structure: fee.structure, allocated: allocated, paid: paid, balance: balance, discount: discount])
-    end
+    @students = Student.all
   end
 
   # GET /student_fees/1
